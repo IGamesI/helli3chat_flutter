@@ -12,8 +12,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   var messageLst = [Message(message: "meow2", isSentBySelf: false), Message(message: "meow3", isSentBySelf: true), Message(message: "meow5", isSentBySelf: false)];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +32,11 @@ class MyHomePage extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+            TextButton(onPressed: () {
+              setState(() {
+                messageLst.add(Message(message: "meow4", isSentBySelf: true));
+              });
+            }, child: Text("Click Me!"))
           ]),
         ));
   }
