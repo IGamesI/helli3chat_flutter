@@ -30,29 +30,32 @@ class _MyHomePageState extends State<MyHomePage> {
             centerTitle: true,
             title: Text("Helli3 Messanger"),
             backgroundColor: Color(0xff627764)),
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        body: Container(
           child: Column(
             children: [
               Expanded(child: SizedBox(
                 child: Container(
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Expanded(child: FractionallySizedBox(
-                    heightFactor: 0.9,
-                    child: Container(
-                      child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+                  child: Column(
+                    children: [
+                      Expanded(child: FractionallySizedBox(
+                        heightFactor: 0.9,
+                        child: Container(
+                          child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                                    for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
 
-                              ]),
+                                  ]),
 
-                            ],
-                          )
-                      ),
-                    ),
-                  )),
+                                ],
+                              )
+                          ),
+                        ),
+                      ))
+                    ],
+                  ),
                 ),
               )),
               Container(
@@ -82,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       TextButton(onPressed: () {
                         setState(() {
                           messageLst.add(Message(message: nameController.text, isSentBySelf: true));
+
                         });
                       }, child: Text("Click Me!"))
                     ],
