@@ -30,14 +30,29 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Color(0xff627764)),
         body: Padding(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
-            TextButton(onPressed: () {
-              setState(() {
-                messageLst.add(Message(message: "meow4", isSentBySelf: true));
-              });
-            }, child: Text("Click Me!"))
-          ]),
+          child: Column(
+            children: [
+              Container(
+                height: 500,
+                child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+
+                        ]),
+
+                      ],
+                    )
+                ),
+              ),
+              TextButton(onPressed: () {
+                setState(() {
+                  messageLst.add(Message(message: "meow4", isSentBySelf: true));
+                });
+              }, child: Text("Click Me!"))
+            ],
+          )
         ));
   }
 }
