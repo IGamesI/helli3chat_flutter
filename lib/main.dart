@@ -19,8 +19,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var messageLst = [Message(message: "meow2", isSentBySelf: false), Message(message: "meow3", isSentBySelf: true), Message(message: "meow5", isSentBySelf: false)];
-  TextEditingController nameController = TextEditingController();
+  TextEditingController messageInputController = TextEditingController();
+  ScrollController messageScrollController = ScrollController();
   String fullName = '';
+
+  void addMessageToList(bool isSentBySelf, var messageTxt) {
+    setState(() {
+      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf));
+    });
+  }
+
+  void scrollToMessageListBottom() {
+    setState(() {
+      messageScrollController.animateTo(messageScrollController.position.maxScrollExtent, duration: Duration(milliseconds: 1), curve: Curves.linear);
+    });
+  }
+
+  void handleSendMessage() async {
+    addMessageToList(true, messageInputController.text);
+    messageInputController.clear();
+    await Future.delayed(Duration(milliseconds: 5));
+    scrollToMessageListBottom();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: [
                       Expanded(child: FractionallySizedBox(
-                        heightFactor: 0.9,
+                        heightFactor: 1,
                         child: Container(
                           child: SingleChildScrollView(
+
+                              controller: messageScrollController,
                               child: Column(
                                 children: [
                                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -67,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(child: SizedBox(
                           height: 50,
                           child: TextField(
-                            controller: nameController,
+                            controller: messageInputController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Full Name',
@@ -80,14 +102,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                 //fullName = nameController.text;
                               });
                             },
+                            onTap: () async {
+                              if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
+                                await Future.delayed(Duration(milliseconds: 175));
+                                scrollToMessageListBottom();
+                              }
+
+                            },
                           )
                       )),
-                      TextButton(onPressed: () {
-                        setState(() {
-                          messageLst.add(Message(message: nameController.text, isSentBySelf: true));
-
-                        });
-                      }, child: Text("Click Me!"))
+                      TextButton(onPressed: handleSendMessage, child: Text("Click Me!"))
                     ],
                   ),
                 ),
@@ -104,3 +128,4 @@ class Message {
 
   const Message({required this.message, required this.isSentBySelf});
 }
+
