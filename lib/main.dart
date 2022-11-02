@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'messageWidget.dart';
+import 'package:helli3chat_flutter/Themes/LightTheme.dart';
 
 void main() => runApp(MyApp());
 
@@ -49,8 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // The title text which will be shown on the action bar
             centerTitle: true,
             title: Text("Helli3 Messanger"),
-            backgroundColor: Color(0xff627764)),
+            backgroundColor: lightTheme.primaryColor),
         body: Container(
+          color: lightTheme.backgroundColor,
           child: Column(
             children: [
               Expanded(child: SizedBox(
