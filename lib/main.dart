@@ -24,6 +24,8 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
 
+
+
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
       messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf));
@@ -37,14 +39,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void handleSendMessage() async {
-    addMessageToList(true, messageInputController.text);
-    messageInputController.clear();
-    await Future.delayed(Duration(milliseconds: 5));
-    scrollToMessageListBottom();
+    if (messageInputController.text != "") {
+      addMessageToList(true, messageInputController.text);
+      messageInputController.clear();
+      await Future.delayed(Duration(milliseconds: 5));
+      scrollToMessageListBottom();
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
           // The title text which will be shown on the action bar
@@ -92,20 +98,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
                       child: Row(
                       children: [
-                        Expanded(child: SizedBox(
-                            height: 50,
+                        Expanded(child: Container(
+                            constraints: BoxConstraints(minHeight: 50, maxHeight: 100),
                             child: TextField(
                               controller: messageInputController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
                               style: TextStyle(
                                 color: darkTheme.textColor,
                                 leadingDistribution: TextLeadingDistribution.even,
-                                
+
                               ),
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide.none,
-                                  
+
                                 ),
                               ),
                               onChanged: (text) {
