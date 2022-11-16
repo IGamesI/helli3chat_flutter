@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'messageWidget.dart';
-import 'package:helli3chat_flutter/Themes/LightTheme.dart';
+import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,7 +19,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var messageLst = [Message(message: "meow2", isSentBySelf: false), Message(message: "meow3", isSentBySelf: true), Message(message: "meow5", isSentBySelf: false)];
+  var messageLst = [Message(message: "meow223rrrrrrrrrrrrrrrrrrrrrrr 3e3r32re32er32re32er", isSentBySelf: false), Message(message: "meow3", isSentBySelf: true), Message(message: "meow5", isSentBySelf: false)];
   TextEditingController messageInputController = TextEditingController();
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
@@ -50,9 +50,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // The title text which will be shown on the action bar
             centerTitle: true,
             title: Text("Helli3 Messanger"),
-            backgroundColor: lightTheme.primaryColor),
+            backgroundColor: darkTheme.appBarColor
+        ),
         body: Container(
-          color: lightTheme.backgroundColor,
+          color: darkTheme.backgroundColor,
           child: Column(
             children: [
               Expanded(child: SizedBox(
@@ -83,38 +84,58 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )),
               Container(
-                color: Colors.grey[400],
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Row(
-                    children: [
-                      Expanded(child: SizedBox(
-                          height: 50,
-                          child: TextField(
-                            controller: messageInputController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Full Name',
-                            ),
-                            onChanged: (text) {
-                              setState(() {
-                                fullName = text;
-                                //you can access nameController in its scope to get
-                                // the value of text entered as shown below
-                                //fullName = nameController.text;
-                              });
-                            },
-                            onTap: () async {
-                              if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                await Future.delayed(Duration(milliseconds: 175));
-                                scrollToMessageListBottom();
-                              }
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                      child: Row(
+                      children: [
+                        Expanded(child: SizedBox(
+                            height: 50,
+                            child: TextField(
+                              controller: messageInputController,
+                              style: TextStyle(
+                                color: darkTheme.textColor,
+                                leadingDistribution: TextLeadingDistribution.even,
+                                
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  
+                                ),
+                              ),
+                              onChanged: (text) {
+                                setState(() {
+                                  fullName = text;
+                                  //you can access nameController in its scope to get
+                                  // the value of text entered as shown below
+                                  //fullName = nameController.text;
+                                });
+                              },
+                              onTap: () async {
+                                if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
+                                  await Future.delayed(Duration(milliseconds: 175));
+                                  scrollToMessageListBottom();
+                                }
 
-                            },
-                          )
-                      )),
-                      TextButton(onPressed: handleSendMessage, child: Text("Click Me!"))
-                    ],
+                              },
+                            )
+                        )),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8), color: darkTheme.primaryColor),
+
+                          child: IconButton(
+                            onPressed: handleSendMessage,
+                            icon: Icon(Icons.send, color: darkTheme.secondryBackgroundColor),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )
