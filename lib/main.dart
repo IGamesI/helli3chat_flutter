@@ -24,8 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
 
-
-
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
       messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf));
@@ -40,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleSendMessage() async {
     if (messageInputController.text != "") {
-      addMessageToList(true, messageInputController.text);
+      addMessageToList(true, messageInputController.text.trim());
       messageInputController.clear();
       await Future.delayed(Duration(milliseconds: 5));
       scrollToMessageListBottom();
@@ -55,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           // The title text which will be shown on the action bar
             centerTitle: true,
-            title: Text("Helli3 Messanger"),
+            title: Text("Helli3 Messenger"),
             backgroundColor: darkTheme.appBarColor
         ),
         body: Container(
@@ -101,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(child: Container(
                             constraints: BoxConstraints(minHeight: 50, maxHeight: 100),
                             child: TextField(
+                              
                               controller: messageInputController,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
@@ -110,7 +109,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                               ),
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide.none,
 
@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               },
                               onTap: () async {
                                 if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                  await Future.delayed(Duration(milliseconds: 175));
+                                  await Future.delayed(Duration(milliseconds: 185));
                                   scrollToMessageListBottom();
                                 }
 
