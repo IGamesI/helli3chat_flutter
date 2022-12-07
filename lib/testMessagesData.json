@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "message": "test message",
+      "isSentBySelf": false
+    },
+    {
+      "message": "test message 2",
+      "isSentBySelf": true
+    }
+  ]
+}

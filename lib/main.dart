@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
 import 'messageWidget.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
 
@@ -19,10 +22,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var messageLst = [Message(message: "meow223rrrrrrrrrrrrrrrrrrrrrrr 3e3r32re32er32re32er", isSentBySelf: false), Message(message: "meow3", isSentBySelf: true), Message(message: "meow5", isSentBySelf: false)];
+  var messageLst = [];
   TextEditingController messageInputController = TextEditingController();
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
+
+  Future<void> readMessagesJson() async {
+    final String response = await rootBundle.loadString('lib/testMessagesData.json');
+    final data = await json.decode(response);
+    setState(() {
+      List tempMessageListJSON = data["items"];
+      int counter = 0;
+      for (var messageDict in tempMessageListJSON) {
+        messageLst.add(Message(message: messageDict["message"], isSentBySelf: messageDict["isSentBySelf"]));
+        counter += 1;
+      }
+      print("hi");
+      print(messageLst);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readMessagesJson();
+  }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
