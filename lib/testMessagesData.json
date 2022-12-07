@@ -1,12 +1,28 @@
 {
   "items": [
     {
-      "message": "test message",
-      "isSentBySelf": false
+      "id":1,
+      "text":"Hello 1",
+      "delivered":true,
+      "senderid":1,
+      "sent":true,
+      "recieverid":2
     },
     {
-      "message": "test message 2",
-      "isSentBySelf": true
+      "id":2,
+      "text":"Hello 1",
+      "delivered":true,
+      "senderid":2,
+      "sent":true,
+      "recieverid":1
+    },
+    {
+      "id":3,
+      "text":"Hello 3",
+      "delivered":true,
+      "senderid":1,
+      "sent":true,
+      "recieverid":2
     }
   ]
 }

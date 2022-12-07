@@ -34,7 +34,12 @@ class _MyHomePageState extends State<MyHomePage> {
       List tempMessageListJSON = data["items"];
       int counter = 0;
       for (var messageDict in tempMessageListJSON) {
-        messageLst.add(Message(message: messageDict["message"], isSentBySelf: messageDict["isSentBySelf"]));
+        if (messageDict["senderid"] == 1) {
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
+        } else {
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
+        }
+
         counter += 1;
       }
       print("hi");
