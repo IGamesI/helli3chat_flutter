@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:requests/requests.dart';
 
 import 'messageWidget.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
@@ -28,22 +30,20 @@ class _MyHomePageState extends State<MyHomePage> {
   String fullName = '';
 
   Future<void> readMessagesJson() async {
-    final String response = await rootBundle.loadString('lib/testMessagesData.json');
-    final data = await json.decode(response);
+    // var newRequest = await Requests.get('http://37.32.28.222/all');
+    // newRequest.raiseForStatus();
+    // String requestBody = newRequest.content();
+    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}]';
     setState(() {
-      List tempMessageListJSON = data["items"];
-      int counter = 0;
-      for (var messageDict in tempMessageListJSON) {
-        if (messageDict["senderid"] == 1) {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
-        } else {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
-        }
-
-        counter += 1;
-      }
-      print("hi");
-      print(messageLst);
+      List tempMessageListJSON = List<String>.from(json.decode(requestBody));
+      print(tempMessageListJSON);
+      // for (var messageDict in tempMessageListJSON) {
+      //   if (messageDict["senderid"] == 1) {
+      //     messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
+      //   } else {
+      //     messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
+      //   }
+      // }
     });
   }
 
