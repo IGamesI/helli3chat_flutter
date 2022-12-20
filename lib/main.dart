@@ -33,17 +33,17 @@ class _MyHomePageState extends State<MyHomePage> {
     // var newRequest = await Requests.get('http://37.32.28.222/all');
     // newRequest.raiseForStatus();
     // String requestBody = newRequest.content();
-    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}]';
+    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
     setState(() {
-      List tempMessageListJSON = List<String>.from(json.decode(requestBody));
+      List tempMessageListJSON = jsonDecode(requestBody);
       print(tempMessageListJSON);
-      // for (var messageDict in tempMessageListJSON) {
-      //   if (messageDict["senderid"] == 1) {
-      //     messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
-      //   } else {
-      //     messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
-      //   }
-      // }
+      for (var messageDict in tempMessageListJSON) {
+        if (messageDict["senderid"] == 1) {
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
+        } else {
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
+        }
+      }
     });
   }
 
