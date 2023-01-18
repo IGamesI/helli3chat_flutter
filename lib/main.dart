@@ -30,10 +30,10 @@ class _MyHomePageState extends State<MyHomePage> {
   String fullName = '';
 
   Future<void> readMessagesJson() async {
-    // var newRequest = await Requests.get('http://37.32.28.222/all');
-    // newRequest.raiseForStatus();
-    // String requestBody = newRequest.content();
-    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
+    var newRequest = await Requests.get('http://37.32.28.222/all');
+    newRequest.raiseForStatus();
+    String requestBody = newRequest.content();
+    //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
     setState(() {
       List tempMessageListJSON = jsonDecode(requestBody);
       print(tempMessageListJSON);
@@ -65,9 +65,39 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+   Future<void> sendMessageToServer(String message) async {
+     Map<String, String> params = {
+       "text": message,
+       "sent": "false",
+       "senderid": "527ae953-75e9-11ed-8d37-f1dc34e9f9cc",
+       "receiverid": "527ae953-75e9-11ed-8d37-f1dc34e9f9cc",
+     };
+     print(params);
+
+     Map<String, String> headers = {
+       "Content-Type": "application/json"
+     };
+     var newRequest = await Requests.post('http://37.32.28.222/new',
+         body: {
+           'text': message,
+           'sent': false,
+           'senderid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc',
+           'receiverid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
+         },
+         bodyEncoding: RequestBodyEncoding.JSON,
+         headers: headers
+     );
+     newRequest.raiseForStatus();
+     String requestBody = newRequest.content();
+     
+     print(requestBody);
+   }
+
   void handleSendMessage() async {
     if (messageInputController.text != "") {
       addMessageToList(true, messageInputController.text.trim());
+      sendMessageToServer(messageInputController.text.trim());
+
       messageInputController.clear();
       await Future.delayed(Duration(milliseconds: 5));
       scrollToMessageListBottom();
