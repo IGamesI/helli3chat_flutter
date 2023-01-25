@@ -21,7 +21,8 @@ class LoginPage extends State<LoginPageState> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    TextEditingController fNameInputController = TextEditingController();
+    TextEditingController usernameInputController = TextEditingController();
+    TextEditingController passwordInputController = TextEditingController();
     String fName;
 
     return Scaffold(
@@ -58,7 +59,7 @@ class LoginPage extends State<LoginPageState> {
                                     borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
                                 child: TextField(
                                     cursorColor: darkTheme.primaryColor,
-                                    controller: fNameInputController,
+                                    controller: usernameInputController,
 
                                     keyboardType: TextInputType.text,
                                     maxLines: null,
@@ -69,7 +70,7 @@ class LoginPage extends State<LoginPageState> {
                                     ),
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      hintText: "First Name",
+                                      hintText: "Username...",
                                       hintStyle: TextStyle(
                                         color: darkTheme.textColor
                                       ),
@@ -101,6 +102,84 @@ class LoginPage extends State<LoginPageState> {
                                   // },
                                 ),
                               ),
+                            ),
+                          ),
+                          Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                              padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                                child: TextField(
+                                  cursorColor: darkTheme.primaryColor,
+                                  controller: passwordInputController,
+
+                                  keyboardType: TextInputType.text,
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                  style: TextStyle(
+                                    color: darkTheme.textColor,
+                                    leadingDistribution: TextLeadingDistribution.even,
+
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    hintText: "Password...",
+                                    hintStyle: TextStyle(
+                                        color: darkTheme.textColor
+                                    ),
+                                    border: InputBorder.none,
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      borderSide: BorderSide(
+                                        color: darkTheme.primaryColor,
+                                        width: 3,
+                                      ),
+
+                                    ),
+                                  ),
+                                  // onChanged: (text) {
+                                  //   setState(() {
+                                  //     fName = text;
+                                  //     //you can access nameController in its scope to get
+                                  //     // the value of text entered as shown below
+                                  //     //fullName = nameController.text;
+                                  //   });
+                                  // }
+                                  // onTap: () async {
+                                  //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
+                                  //     await Future.delayed(Duration(milliseconds: 185));
+                                  //     scrollToMessageListBottom();
+                                  //   }
+                                  //
+                                  // },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                            child: SizedBox(
+                                width: width,
+                                height: 40,
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+
+                                  child: ElevatedButton(
+                                      onPressed: () => {},
+                                      style: ElevatedButton.styleFrom(
+                                        primary: darkTheme.primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8), // <-- Radius
+                                        ),
+                                      ),
+
+                                      child: Text("Continue", style: TextStyle(fontSize: 18),)
+                                  ),
+                                )
                             ),
                           )
                         ],
