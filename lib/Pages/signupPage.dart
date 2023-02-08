@@ -11,10 +11,19 @@ class SignUpPageState extends StatefulWidget {
 }
 
 class SignupPage extends State<SignUpPageState> {
+  bool _passwordVisible = false;
+  bool _repeatPasswordVisible = false;
   @override
   void initState() {
     super.initState();
+    _passwordVisible = false;
+    _repeatPasswordVisible = false;
   }
+
+  String userName = "";
+  String userPass = "";
+  String userRepeatPass = "";
+  String userPhone = "";
 
   @override
   Widget build(BuildContext context) {
@@ -25,35 +34,46 @@ class SignupPage extends State<SignUpPageState> {
     TextEditingController passwordInputController = TextEditingController();
     TextEditingController repeatPasswordInputController = TextEditingController();
     TextEditingController phoneNumberInputController = TextEditingController();
-    String fName;
+
+    ScrollController pageScrollController = ScrollController();
+
+    usernameInputController.text = userName;
+    passwordInputController.text = userPass;
+    repeatPasswordInputController.text = userRepeatPass;
+    phoneNumberInputController.text = userPhone;
 
     return Scaffold(
+        backgroundColor: darkTheme.backgroundColor,
         appBar: AppBar(
           // The title text which will be shown on the action bar
             centerTitle: true,
             title: Text("Helli3 Messenger"),
             backgroundColor: darkTheme.appBarColor
         ),
-        body: Container(
-            color: darkTheme.backgroundColor,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Container(
-                      constraints: BoxConstraints(minWidth: width/2, minHeight: width/2),
-                      child: SizedBox(
-                          height: 400,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Sign Up", style: TextStyle(
-                                  color: darkTheme.textColor,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold
-                              )),
-                              Flexible(
-                                child: Container(
+        body: GlowingOverscrollIndicator(
+          axisDirection: AxisDirection.down,
+          // the color you want to change in place of green
+          color: darkTheme.backgroundColor,
+          child: SingleChildScrollView(
+            controller: pageScrollController,
+            child: Container(
+                color: darkTheme.backgroundColor,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        constraints: BoxConstraints(minWidth: width/2, minHeight: width/2),
+                        child: SizedBox(
+                            height: 400,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Sign Up", style: TextStyle(
+                                    color: darkTheme.textColor,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold
+                                )),
+                                Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
                                   child: Container(
@@ -105,9 +125,7 @@ class SignupPage extends State<SignUpPageState> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Flexible(
-                                child: Container(
+                                Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
                                   child: Container(
@@ -118,7 +136,7 @@ class SignupPage extends State<SignUpPageState> {
                                       controller: passwordInputController,
 
                                       keyboardType: TextInputType.text,
-                                      obscureText: true,
+                                      obscureText: !_passwordVisible,
                                       enableSuggestions: false,
                                       autocorrect: false,
                                       style: TextStyle(
@@ -127,7 +145,7 @@ class SignupPage extends State<SignUpPageState> {
 
                                       ),
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
                                         hintText: "Password...",
                                         hintStyle: TextStyle(
                                             color: darkTheme.textColor
@@ -142,6 +160,26 @@ class SignupPage extends State<SignUpPageState> {
                                           ),
 
                                         ),
+
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            // Based on passwordVisible state choose the icon
+                                            _passwordVisible
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: darkTheme.primaryColor,
+                                          ),
+                                          onPressed: () {
+                                            // Update the state i.e. toogle the state of passwordVisible variable
+                                            setState(() {
+                                              _passwordVisible = !_passwordVisible;
+                                              userName = usernameInputController.text;
+                                              userPass = passwordInputController.text;
+                                              userRepeatPass = repeatPasswordInputController.text;
+                                              userPhone = phoneNumberInputController.text;
+                                            });
+                                          },
+                                        ),
                                       ),
                                       // onChanged: (text) {
                                       //   setState(() {
@@ -161,9 +199,7 @@ class SignupPage extends State<SignUpPageState> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Flexible(
-                                child: Container(
+                                Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
                                   child: Container(
@@ -174,7 +210,7 @@ class SignupPage extends State<SignUpPageState> {
                                       controller: repeatPasswordInputController,
 
                                       keyboardType: TextInputType.text,
-                                      obscureText: true,
+                                      obscureText: !_repeatPasswordVisible,
                                       enableSuggestions: false,
                                       autocorrect: false,
                                       style: TextStyle(
@@ -183,7 +219,7 @@ class SignupPage extends State<SignUpPageState> {
 
                                       ),
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
                                         hintText: "Repeat Password...",
                                         hintStyle: TextStyle(
                                             color: darkTheme.textColor
@@ -198,6 +234,26 @@ class SignupPage extends State<SignUpPageState> {
                                           ),
 
                                         ),
+
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            // Based on passwordVisible state choose the icon
+                                            _repeatPasswordVisible
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: darkTheme.primaryColor,
+                                          ),
+                                          onPressed: () {
+                                            // Update the state i.e. toogle the state of passwordVisible variable
+                                            setState(() {
+                                              _repeatPasswordVisible = !_repeatPasswordVisible;
+                                              userName = usernameInputController.text;
+                                              userPass = passwordInputController.text;
+                                              userRepeatPass = repeatPasswordInputController.text;
+                                              userPhone = phoneNumberInputController.text;
+                                            });
+                                          },
+                                        ),
                                       ),
                                       // onChanged: (text) {
                                       //   setState(() {
@@ -217,9 +273,7 @@ class SignupPage extends State<SignUpPageState> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Flexible(
-                                child: Container(
+                                Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
                                   child: Container(
@@ -270,36 +324,36 @@ class SignupPage extends State<SignUpPageState> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                child: SizedBox(
-                                    width: width,
-                                    height: 40,
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  child: SizedBox(
+                                      width: width,
+                                      height: 40,
+                                      child: Container(
+                                        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
 
-                                      child: ElevatedButton(
-                                          onPressed: () => {},
-                                          style: ElevatedButton.styleFrom(
-                                            primary: darkTheme.primaryColor,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8), // <-- Radius
+                                        child: ElevatedButton(
+                                            onPressed: () => {},
+                                            style: ElevatedButton.styleFrom(
+                                              primary: darkTheme.primaryColor,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8), // <-- Radius
+                                              ),
                                             ),
-                                          ),
 
-                                          child: Text("Continue", style: TextStyle(fontSize: 18),)
-                                      ),
-                                    )
-                                ),
-                              )
-                            ],
-                          )
-                      )
-                  ),
+                                            child: Text("Continue", style: TextStyle(fontSize: 18),)
+                                        ),
+                                      )
+                                  ),
+                                )
+                              ],
+                            )
+                        )
+                    ),
+                  ],
                 )
-              ],
-            )
+            ),
+          ),
         )
     );
   }
