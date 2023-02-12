@@ -19,10 +19,10 @@ class ChatPage extends State<ChatPageState> {
   String fullName = '';
 
   Future<void> readMessagesJson() async {
-    var newRequest = await Requests.get('http://37.32.28.222/all');
-    newRequest.raiseForStatus();
-    String requestBody = newRequest.content();
-    //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
+    //var newRequest = await Requests.get('http://37.32.28.222/all');
+    //newRequest.raiseForStatus();
+    // String requestBody = newRequest.content();
+    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
     setState(() {
       List tempMessageListJSON = jsonDecode(requestBody);
       for (var messageDict in tempMessageListJSON) {
@@ -54,13 +54,6 @@ class ChatPage extends State<ChatPageState> {
   }
 
   Future<void> sendMessageToServer(String message) async {
-    Map<String, String> params = {
-      "text": message,
-      "sent": "false",
-      "senderid": "527ae953-75e9-11ed-8d37-f1dc34e9f9cc",
-      "receiverid": "527ae953-75e9-11ed-8d37-f1dc34e9f9cc",
-    };
-
     Map<String, String> headers = {
       "Content-Type": "application/json"
     };
@@ -93,107 +86,147 @@ class ChatPage extends State<ChatPageState> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-        appBar: AppBar(
-          // The title text which will be shown on the action bar
-            centerTitle: true,
-            title: Text("Helli3 Messenger"),
-            backgroundColor: darkTheme.appBarColor
-        ),
-        body: Container(
-            color: darkTheme.backgroundColor,
-            child: Column(
-              children: [
-                Expanded(child: SizedBox(
+    return SafeArea(child: Scaffold(
+      backgroundColor: darkTheme.backgroundColor,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60), // Set this height
+        child: PhysicalModel(
+          color: darkTheme.appBarColor,
+          elevation: 8,
+          shadowColor: darkTheme.appBarColor,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+              color: darkTheme.appBarColor,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => {},
+                      icon: Icon(Icons.arrow_back, color: darkTheme.textColor),
+                      label: Text(""),
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(width: 0, color: darkTheme.appBarColor)
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Text(
+                        'Test User',
+                        style: TextStyle(
+                          color: darkTheme.textColor,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              )
+          ),
+        )
+      ),
+      body: Container(
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          color: darkTheme.backgroundColor,
+          child: Column(
+            children: [
+              Expanded(child: SizedBox(
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Column(
+                    children: [
+                      Expanded(child: FractionallySizedBox(
+                        heightFactor: 1,
+                        child: Container(
+                            child: GlowingOverscrollIndicator(
+                              axisDirection: AxisDirection.down,
+                              color: darkTheme.backgroundColor,
+                              child: SingleChildScrollView(
+
+                                  controller: messageScrollController,
+                                  child: Column(
+                                    children: [
+                                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                                        for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+
+                                      ]),
+
+                                    ],
+                                  )
+                              ),
+                            )
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+              )),
+              Container(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Container(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child: Column(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                    child: Row(
                       children: [
-                        Expanded(child: FractionallySizedBox(
-                          heightFactor: 1,
-                          child: Container(
-                            child: SingleChildScrollView(
+                        Expanded(child: Container(
+                            constraints: BoxConstraints(minHeight: 50, maxHeight: 100),
+                            child: TextField(
 
-                                controller: messageScrollController,
-                                child: Column(
-                                  children: [
-                                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                      for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+                              controller: messageInputController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              style: TextStyle(
+                                color: darkTheme.textColor,
+                                leadingDistribution: TextLeadingDistribution.even,
 
-                                    ]),
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
 
-                                  ],
-                                )
-                            ),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+
+                                ),
+                              ),
+                              onChanged: (text) {
+                                setState(() {
+                                  fullName = text;
+                                  //you can access nameController in its scope to get
+                                  // the value of text entered as shown below
+                                  //fullName = nameController.text;
+                                });
+                              },
+                              onTap: () async {
+                                if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
+                                  await Future.delayed(Duration(milliseconds: 185));
+                                  scrollToMessageListBottom();
+                                }
+
+                              },
+                            )
+                        )),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8), color: darkTheme.primaryColor),
+
+                          child: IconButton(
+                            onPressed: handleSendMessage,
+                            icon: Icon(Icons.send, color: darkTheme.secondryBackgroundColor),
                           ),
-                        ))
+                        )
                       ],
                     ),
                   ),
-                )),
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
-                      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                      child: Row(
-                        children: [
-                          Expanded(child: Container(
-                              constraints: BoxConstraints(minHeight: 50, maxHeight: 100),
-                              child: TextField(
-
-                                controller: messageInputController,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                style: TextStyle(
-                                  color: darkTheme.textColor,
-                                  leadingDistribution: TextLeadingDistribution.even,
-
-                                ),
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-
-                                  ),
-                                ),
-                                onChanged: (text) {
-                                  setState(() {
-                                    fullName = text;
-                                    //you can access nameController in its scope to get
-                                    // the value of text entered as shown below
-                                    //fullName = nameController.text;
-                                  });
-                                },
-                                onTap: () async {
-                                  if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                    await Future.delayed(Duration(milliseconds: 185));
-                                    scrollToMessageListBottom();
-                                  }
-
-                                },
-                              )
-                          )),
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8), color: darkTheme.primaryColor),
-
-                            child: IconButton(
-                              onPressed: handleSendMessage,
-                              icon: Icon(Icons.send, color: darkTheme.secondryBackgroundColor),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            )
-        ));
+                ),
+              )
+            ],
+          )
+      ),
+    ));
   }
 }
 
