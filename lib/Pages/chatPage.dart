@@ -19,10 +19,17 @@ class ChatPage extends State<ChatPageState> {
   String fullName = '';
 
   Future<void> readMessagesJson() async {
-    //var newRequest = await Requests.get('http://37.32.28.222/all');
-    //newRequest.raiseForStatus();
-    // String requestBody = newRequest.content();
-    String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
+    DateTime dateTime = DateTime.now();
+    print('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&timestamp=' + dateTime.toString());
+    var newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString());
+    newRequest.raiseForStatus();
+    String requestBody = newRequest.content();
+
+    // String currentDate = dateTime.year.toString() + "-" + dateTime.month.toString();
+    //print(dateTime.toString());
+    //print(dateTime.timeZoneName);
+
+    //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
     setState(() {
       List tempMessageListJSON = jsonDecode(requestBody);
       for (var messageDict in tempMessageListJSON) {
@@ -54,6 +61,11 @@ class ChatPage extends State<ChatPageState> {
   }
 
   Future<void> sendMessageToServer(String message) async {
+    DateTime dateTime = DateTime.now();
+    // String currentDate = dateTime.year.toString() + "-" + dateTime.month.toString();
+    print(dateTime.toString());
+    print(dateTime.timeZoneName);
+
     Map<String, String> headers = {
       "Content-Type": "application/json"
     };
@@ -61,6 +73,8 @@ class ChatPage extends State<ChatPageState> {
         body: {
           'text': message,
           'sent': false,
+          'zone': dateTime.timeZoneName,
+          'date': dateTime.toString(),
           'senderid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc',
           'receiverid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
         },
