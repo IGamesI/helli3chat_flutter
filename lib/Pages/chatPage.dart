@@ -20,8 +20,8 @@ class ChatPage extends State<ChatPageState> {
 
   Future<void> readMessagesJson() async {
     DateTime dateTime = DateTime.now();
-    print('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&timestamp=' + dateTime.toString());
-    var newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString());
+    print('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&timestamp=' + dateTime.toString().replaceAll(' ', '@'));
+    var newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString().replaceAll(' ', '@'));
     newRequest.raiseForStatus();
     String requestBody = newRequest.content();
 
@@ -74,7 +74,7 @@ class ChatPage extends State<ChatPageState> {
           'text': message,
           'sent': false,
           'zone': dateTime.timeZoneName,
-          'date': dateTime.toString(),
+          'date': dateTime.toString().replaceAll(' ', '@'),
           'senderid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc',
           'receiverid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
         },
