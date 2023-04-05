@@ -47,8 +47,8 @@ class ChatPage extends State<ChatPageState> {
   @override
   void initState() {
     super.initState();
-    // readMessagesJson();
-    _hashImageUrl(_imageUrl);
+    readMessagesJson();
+    _hashImageUrl();
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
@@ -100,14 +100,10 @@ class ChatPage extends State<ChatPageState> {
 
   }
 
-  String _imageUrl = "https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg";
-  String _hashedString = "N/A";
-
-
   var imageData = null;
   var bytes = null;
 
-  void _hashImageUrl(String imageUrl) async {
+  void _hashImageUrl() async {
     imageData = await rootBundle.load('assets/TestProfile.jpg');
     bytes = imageData.buffer.asUint8List();
   }

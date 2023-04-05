@@ -6,5 +6,6 @@ CustomTheme darkTheme  = const CustomTheme(
     secondryBackgroundColor: Color(0xff3f4148),
     appBarColor: Color(0xff20232b),
     primaryColor: Color(0xffb785f5),
-    textColor: Colors.white
+    textColor: Colors.white,
+    secondryTextColor: Colors.grey,
 );
