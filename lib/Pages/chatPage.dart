@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:requests/requests.dart';
 
@@ -45,7 +47,8 @@ class ChatPage extends State<ChatPageState> {
   @override
   void initState() {
     super.initState();
-    readMessagesJson();
+    // readMessagesJson();
+    _hashImageUrl(_imageUrl);
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
@@ -97,6 +100,18 @@ class ChatPage extends State<ChatPageState> {
 
   }
 
+  String _imageUrl = "https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg";
+  String _hashedString = "N/A";
+
+
+  var imageData = null;
+  var bytes = null;
+
+  void _hashImageUrl(String imageUrl) async {
+    imageData = await rootBundle.load('assets/TestProfile.jpg');
+    bytes = imageData.buffer.asUint8List();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -116,16 +131,20 @@ class ChatPage extends State<ChatPageState> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    OutlinedButton.icon(
-                      onPressed: () => {},
-                      icon: Icon(Icons.arrow_back, color: darkTheme.textColor),
-                      label: Text(""),
-                      style: OutlinedButton.styleFrom(
-                          side: BorderSide(width: 0, color: darkTheme.appBarColor)
+                    Container(
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      child: GestureDetector(
+                        onTap: () => {},
+                        child: Icon(Icons.arrow_back, color: darkTheme.textColor),
                       ),
                     ),
+                    CircleAvatar(
+                      backgroundImage: bytes != null
+                          ? MemoryImage(bytes)
+                          : AssetImage('assets/TestProfile.jpg') as ImageProvider,
+                    ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                       child: Text(
                         'Test User',
                         style: TextStyle(
