@@ -20,27 +20,51 @@ class SignupPage extends State<SignUpPageState> {
     _repeatPasswordVisible = false;
   }
 
-  String userName = "";
-  String userPass = "";
-  String userRepeatPass = "";
-  String userPhone = "";
+  TextEditingController usernameInputController = TextEditingController();
+  TextEditingController passwordInputController = TextEditingController();
+  TextEditingController repeatPasswordInputController = TextEditingController();
+  TextEditingController phoneNumberInputController = TextEditingController();
+
+  Future<void> sendSignUpMessageToServer() async {
+    print({
+      'bio': "",
+      'password': passwordInputController.text,
+      'phone': phoneNumberInputController.text,
+      'profile': "",
+      'username': usernameInputController.text
+    });
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json"
+    };
+    var newRequest = await Requests.post('http://37.32.28.222/signup',
+        body: {
+          'bio': "",
+          'password': passwordInputController.text,
+          'phone': phoneNumberInputController.text,
+          'profile': "",
+          'username': usernameInputController.text
+        },
+        bodyEncoding: RequestBodyEncoding.JSON,
+        headers: headers
+    );
+    newRequest.raiseForStatus();
+    String requestBody = newRequest.content();
+    print(requestBody);
+  }
+
+  void handleContinueButtonPress() async {
+    sendSignUpMessageToServer();
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    TextEditingController usernameInputController = TextEditingController();
-    TextEditingController passwordInputController = TextEditingController();
-    TextEditingController repeatPasswordInputController = TextEditingController();
-    TextEditingController phoneNumberInputController = TextEditingController();
+
 
     ScrollController pageScrollController = ScrollController();
-
-    usernameInputController.text = userName;
-    passwordInputController.text = userPass;
-    repeatPasswordInputController.text = userRepeatPass;
-    phoneNumberInputController.text = userPhone;
 
     return Scaffold(
         backgroundColor: darkTheme.backgroundColor,
@@ -106,22 +130,7 @@ class SignupPage extends State<SignUpPageState> {
                                           ),
 
                                         ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     fName = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                      )
                                     ),
                                   ),
                                 ),
@@ -173,29 +182,10 @@ class SignupPage extends State<SignUpPageState> {
                                             // Update the state i.e. toogle the state of passwordVisible variable
                                             setState(() {
                                               _passwordVisible = !_passwordVisible;
-                                              userName = usernameInputController.text;
-                                              userPass = passwordInputController.text;
-                                              userRepeatPass = repeatPasswordInputController.text;
-                                              userPhone = phoneNumberInputController.text;
                                             });
                                           },
                                         ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     fName = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                      )
                                     ),
                                   ),
                                 ),
@@ -247,29 +237,11 @@ class SignupPage extends State<SignUpPageState> {
                                             // Update the state i.e. toogle the state of passwordVisible variable
                                             setState(() {
                                               _repeatPasswordVisible = !_repeatPasswordVisible;
-                                              userName = usernameInputController.text;
-                                              userPass = passwordInputController.text;
-                                              userRepeatPass = repeatPasswordInputController.text;
-                                              userPhone = phoneNumberInputController.text;
+                                              
                                             });
                                           },
                                         ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     fName = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                      )
                                     ),
                                   ),
                                 ),
@@ -283,7 +255,7 @@ class SignupPage extends State<SignUpPageState> {
                                       cursorColor: darkTheme.primaryColor,
                                       controller: phoneNumberInputController,
 
-                                      keyboardType: TextInputType.phone,
+                                      // keyboardType: TextInputType.phone,
                                       style: TextStyle(
                                         color: darkTheme.textColor,
                                         leadingDistribution: TextLeadingDistribution.even,
@@ -305,22 +277,7 @@ class SignupPage extends State<SignUpPageState> {
                                           ),
 
                                         ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     fName = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                      )
                                     ),
                                   ),
                                 ),
@@ -333,7 +290,9 @@ class SignupPage extends State<SignUpPageState> {
                                         padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
 
                                         child: ElevatedButton(
-                                            onPressed: () => {},
+                                            onPressed: () {
+                                              handleContinueButtonPress();
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               primary: darkTheme.primaryColor,
                                               shape: RoundedRectangleBorder(
