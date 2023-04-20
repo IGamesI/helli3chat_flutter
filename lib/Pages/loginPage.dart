@@ -12,29 +12,51 @@ class LoginPageState extends StatefulWidget {
 
 class LoginPage extends State<LoginPageState> {
   bool _passwordVisible = false;
-
+  bool _repeatPasswordVisible = false;
   @override
   void initState() {
     super.initState();
     _passwordVisible = false;
+    _repeatPasswordVisible = false;
   }
 
-  String userName = "";
-  String userPass = "";
+  TextEditingController usernameInputController = TextEditingController();
+  TextEditingController passwordInputController = TextEditingController();
+
+  Future<void> sendSignUpMessageToServer() async {
+    print({
+      'pass': passwordInputController.text,
+      'username': usernameInputController.text
+    });
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json"
+    };
+    var newRequest = await Requests.post('http://37.32.28.222/signup',
+        body: {
+          'pass': passwordInputController.text,
+          'username': usernameInputController.text
+        },
+        bodyEncoding: RequestBodyEncoding.JSON,
+        headers: headers
+    );
+    newRequest.raiseForStatus();
+    String requestBody = newRequest.content();
+    print(requestBody);
+  }
+
+  void handleContinueButtonPress() async {
+    sendSignUpMessageToServer();
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    TextEditingController usernameInputController = TextEditingController();
-    TextEditingController passwordInputController = TextEditingController();
 
 
     ScrollController pageScrollController = ScrollController();
-
-    usernameInputController.text = userName;
-    passwordInputController.text = userPass;
 
     return Scaffold(
         backgroundColor: darkTheme.backgroundColor,
@@ -74,48 +96,33 @@ class LoginPage extends State<LoginPageState> {
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
                                     child: TextField(
-                                      cursorColor: darkTheme.primaryColor,
-                                      controller: usernameInputController,
+                                        cursorColor: darkTheme.primaryColor,
+                                        controller: usernameInputController,
 
-                                      keyboardType: TextInputType.text,
-                                      maxLines: null,
-                                      style: TextStyle(
-                                        color: darkTheme.textColor,
-                                        leadingDistribution: TextLeadingDistribution.even,
+                                        keyboardType: TextInputType.text,
+                                        maxLines: null,
+                                        style: TextStyle(
+                                          color: darkTheme.textColor,
+                                          leadingDistribution: TextLeadingDistribution.even,
 
-                                      ),
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        hintText: "Username...",
-                                        hintStyle: TextStyle(
-                                            color: darkTheme.textColor
                                         ),
-                                        border: InputBorder.none,
-
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          borderSide: BorderSide(
-                                            color: darkTheme.primaryColor,
-                                            width: 3,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          hintText: "Username...",
+                                          hintStyle: TextStyle(
+                                              color: darkTheme.textColor
                                           ),
+                                          border: InputBorder.none,
 
-                                        ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     fName = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                                            borderSide: BorderSide(
+                                              color: darkTheme.primaryColor,
+                                              width: 3,
+                                            ),
+
+                                          ),
+                                        )
                                     ),
                                   ),
                                 ),
@@ -126,68 +133,51 @@ class LoginPage extends State<LoginPageState> {
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
                                     child: TextField(
-                                      cursorColor: darkTheme.primaryColor,
-                                      controller: passwordInputController,
+                                        cursorColor: darkTheme.primaryColor,
+                                        controller: passwordInputController,
 
-                                      keyboardType: TextInputType.text,
-                                      obscureText: !_passwordVisible,
-                                      enableSuggestions: false,
-                                      autocorrect: false,
-                                      style: TextStyle(
-                                        color: darkTheme.textColor,
-                                        leadingDistribution: TextLeadingDistribution.even,
+                                        keyboardType: TextInputType.text,
+                                        obscureText: !_passwordVisible,
+                                        enableSuggestions: false,
+                                        autocorrect: false,
+                                        style: TextStyle(
+                                          color: darkTheme.textColor,
+                                          leadingDistribution: TextLeadingDistribution.even,
 
-                                      ),
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
-                                        hintText: "Password...",
-                                        hintStyle: TextStyle(
-                                            color: darkTheme.textColor
                                         ),
-                                        border: InputBorder.none,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
+                                          hintText: "Password...",
+                                          hintStyle: TextStyle(
+                                              color: darkTheme.textColor
+                                          ),
+                                          border: InputBorder.none,
 
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          borderSide: BorderSide(
-                                            color: darkTheme.primaryColor,
-                                            width: 3,
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                                            borderSide: BorderSide(
+                                              color: darkTheme.primaryColor,
+                                              width: 3,
+                                            ),
+
                                           ),
 
-                                        ),
-
-                                        suffixIcon: IconButton(
-                                          icon: Icon(
-                                            // Based on passwordVisible state choose the icon
-                                            _passwordVisible
-                                                ? Icons.visibility
-                                                : Icons.visibility_off,
-                                            color: darkTheme.primaryColor,
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: darkTheme.primaryColor,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                _passwordVisible = !_passwordVisible;
+                                              });
+                                            },
                                           ),
-                                          onPressed: () {
-                                            // Update the state i.e. toogle the state of passwordVisible variable
-                                            setState(() {
-                                              _passwordVisible = !_passwordVisible;
-                                              userName = usernameInputController.text;
-                                              userPass = passwordInputController.text;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      // onChanged: (text) {
-                                      //   setState(() {
-                                      //     userPass = text;
-                                      //     //you can access nameController in its scope to get
-                                      //     // the value of text entered as shown below
-                                      //     //fullName = nameController.text;
-                                      //   });
-                                      // }
-                                      // onTap: () async {
-                                      //   if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                      //     await Future.delayed(Duration(milliseconds: 185));
-                                      //     scrollToMessageListBottom();
-                                      //   }
-                                      //
-                                      // },
+                                        )
                                     ),
                                   ),
                                 ),
@@ -200,7 +190,9 @@ class LoginPage extends State<LoginPageState> {
                                         padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
 
                                         child: ElevatedButton(
-                                            onPressed: () => {},
+                                            onPressed: () {
+                                              handleContinueButtonPress();
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               primary: darkTheme.primaryColor,
                                               shape: RoundedRectangleBorder(
