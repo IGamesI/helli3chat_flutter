@@ -183,6 +183,61 @@ class LoginPage extends State<LoginPageState> {
                                 ),
                                 Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                                    child: TextField(
+                                        cursorColor: darkTheme.primaryColor,
+                                        controller: passwordInputController,
+
+                                        keyboardType: TextInputType.text,
+                                        obscureText: !_passwordVisible,
+                                        enableSuggestions: false,
+                                        autocorrect: false,
+                                        style: TextStyle(
+                                          color: darkTheme.textColor,
+                                          leadingDistribution: TextLeadingDistribution.even,
+
+                                        ),
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
+                                          hintText: "Password...",
+                                          hintStyle: TextStyle(
+                                              color: darkTheme.textColor
+                                          ),
+                                          border: InputBorder.none,
+
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                                            borderSide: BorderSide(
+                                              color: darkTheme.primaryColor,
+                                              width: 3,
+                                            ),
+
+                                          ),
+
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: darkTheme.primaryColor,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                _passwordVisible = !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   child: SizedBox(
                                       width: width,
                                       height: 40,
