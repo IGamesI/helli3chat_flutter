@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
@@ -5,6 +7,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:requests/requests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../messageWidget.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
@@ -21,9 +24,20 @@ class ChatPage extends State<ChatPageState> {
   String fullName = '';
 
   Future<void> readMessagesJson() async {
+    print("------ loading messages!");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     DateTime dateTime = DateTime.now();
-    print('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&timestamp=' + dateTime.toString().replaceAll(' ', '@'));
-    var newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString().replaceAll(' ', '@'));
+    final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
+    print("------" + lastUpdatedDate.toString());
+    var newRequest;
+    if (lastUpdatedDate == null) {
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString().replaceAll(' ', '@'));
+    } else {
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'));
+    }
+    await prefs.setString('lastUpdatedTime', dateTime.toString());
+
     newRequest.raiseForStatus();
     String requestBody = newRequest.content();
 
@@ -47,8 +61,12 @@ class ChatPage extends State<ChatPageState> {
   @override
   void initState() {
     super.initState();
-    readMessagesJson();
     _hashImageUrl();
+
+    readMessagesJson();
+    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      readMessagesJson();
+    });
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
