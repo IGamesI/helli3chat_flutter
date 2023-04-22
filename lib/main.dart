@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:helli3chat_flutter/routeGenerator.dart';
 import 'package:requests/requests.dart';
 
 
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChatPageState(),
+      initialRoute: "/",
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }

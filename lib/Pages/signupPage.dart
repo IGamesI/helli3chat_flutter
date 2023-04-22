@@ -54,7 +54,8 @@ class SignupPage extends State<SignUpPageState> {
   }
 
   void handleContinueButtonPress() async {
-    sendSignUpMessageToServer();
+    //sendSignUpMessageToServer();
+    Navigator.of(context).pushNamed('/chat');
   }
 
   @override
