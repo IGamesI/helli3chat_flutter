@@ -32,9 +32,9 @@ class LoginPage extends State<LoginPageState> {
     Map<String, String> headers = {
       "Content-Type": "application/json"
     };
-    var newRequest = await Requests.post('http://37.32.28.222/signup',
+    var newRequest = await Requests.post('http://37.32.28.222/signin',
         body: {
-          'pass': passwordInputController.text,
+          'password': passwordInputController.text,
           'username': usernameInputController.text
         },
         bodyEncoding: RequestBodyEncoding.JSON,

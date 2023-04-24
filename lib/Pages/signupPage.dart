@@ -89,7 +89,7 @@ class SignupPage extends State<SignUpPageState> {
                     Container(
                         constraints: BoxConstraints(minWidth: width/2, minHeight: width/2),
                         child: SizedBox(
-                            height: 400,
+                            height: 450,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -305,7 +305,8 @@ class SignupPage extends State<SignUpPageState> {
                                         ),
                                       )
                                   ),
-                                )
+                                ),
+                                TextButton(onPressed: () {Navigator.of(context).pushNamed('/login');}, child: Text("Sign In"))
                               ],
                             )
                         )

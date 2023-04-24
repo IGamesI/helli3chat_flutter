@@ -28,31 +28,35 @@ class ChatPage extends State<ChatPageState> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DateTime dateTime = DateTime.now();
-    final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
+    // final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
+    final String? lastUpdatedDate = null;
     print("------" + lastUpdatedDate.toString());
+
     var newRequest;
+    Map<String, String> headers = {
+      "Token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc1NDAyNjIsImlzcyI6Im1vaGFtbWFkdGVzdG1vbGF5aSJ9.An5v2sM69k6eIT5jOPcEeYbcl2a776kvEaP5UCESIRKEfnjTMX-VtahKl-uxgWcG5MDBlYMJ2j4GN1iX-hNlDQ"
+    };
     if (lastUpdatedDate == null) {
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + dateTime.toString().replaceAll(' ', '@'));
+      DateTime startDate = dateTime.subtract(Duration(days: 365));
+      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
     } else {
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'));
+      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'));
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'), headers: headers);
     }
     await prefs.setString('lastUpdatedTime', dateTime.toString());
 
-    newRequest.raiseForStatus();
-    String requestBody = newRequest.content();
-
-    // String currentDate = dateTime.year.toString() + "-" + dateTime.month.toString();
-    //print(dateTime.toString());
-    //print(dateTime.timeZoneName);
+    String requestBody = newRequest.body;
+    //print(requestBody);
 
     //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
     setState(() {
       List tempMessageListJSON = jsonDecode(requestBody);
       for (var messageDict in tempMessageListJSON) {
         if (messageDict["senderid"] == 1) {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true));
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Mohammad"));
         } else {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false));
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: "Mohammad"));
         }
       }
     });
@@ -64,14 +68,14 @@ class ChatPage extends State<ChatPageState> {
     _hashImageUrl();
 
     readMessagesJson();
-    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 10), (timer) {
-      readMessagesJson();
-    });
+    // Timer syncMessageTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+    //   readMessagesJson();
+    // });
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
-      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf));
+      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf, userName: "Mohammad"));
     });
   }
 
@@ -97,7 +101,7 @@ class ChatPage extends State<ChatPageState> {
           'zone': dateTime.timeZoneName,
           'date': dateTime.toString().replaceAll(' ', '@'),
           'senderid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc',
-          'receiverid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
+          'chatid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
         },
         bodyEncoding: RequestBodyEncoding.JSON,
         headers: headers
@@ -141,29 +145,30 @@ class ChatPage extends State<ChatPageState> {
           child: Container(
               color: darkTheme.appBarColor,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                      child: GestureDetector(
-                        onTap: () => {},
-                        child: Icon(Icons.arrow_back, color: darkTheme.textColor),
-                      ),
-                    ),
-                    CircleAvatar(
-                      backgroundImage: bytes != null
-                          ? MemoryImage(bytes)
-                          : AssetImage('assets/TestProfile.jpg') as ImageProvider,
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    //   child: GestureDetector(
+                    //     onTap: () => {},
+                    //     child: Icon(Icons.arrow_back, color: darkTheme.textColor),
+                    //   ),
+                    // ),
+                    // CircleAvatar(
+                    //   backgroundImage: bytes != null
+                    //       ? MemoryImage(bytes)
+                    //       : AssetImage('assets/TestProfile.jpg') as ImageProvider,
+                    // ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                       child: Text(
-                        'Test User',
+                        'Global Chat',
                         style: TextStyle(
                           color: darkTheme.textColor,
                           fontSize: 18,
+                          fontWeight: FontWeight.bold
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -196,7 +201,7 @@ class ChatPage extends State<ChatPageState> {
                                   child: Column(
                                     children: [
                                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                        for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf),
+                                        for(var currentMessage in messageLst ) MessageWidget(message: currentMessage.message, isSentBySelf: currentMessage.isSentBySelf, userName: currentMessage.userName,),
 
                                       ]),
 
@@ -280,6 +285,7 @@ class ChatPage extends State<ChatPageState> {
 class Message {
   final String message;
   final bool isSentBySelf;
+  final String userName;
 
-  const Message({required this.message, required this.isSentBySelf});
+  const Message({required this.message, required this.isSentBySelf, required this.userName});
 }

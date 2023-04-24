@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:helli3chat_flutter/Pages/chatPage.dart';
 import 'package:helli3chat_flutter/Pages/loginPage.dart';
+import 'package:helli3chat_flutter/Pages/profilePage.dart';
+import 'package:helli3chat_flutter/Pages/settingsPage.dart';
 import 'package:helli3chat_flutter/Pages/signupPage.dart';
 import 'package:helli3chat_flutter/main.dart';
 
@@ -12,11 +14,15 @@ class RouteGenerator {
       case '/':
         return MaterialPageRoute(builder: (_) => SignUpPageState());
       case '/login':
-          return MaterialPageRoute(builder: (_) => LoginPageState());
+        return MaterialPageRoute(builder: (_) => LoginPageState());
       case "/chat":
         return MaterialPageRoute(builder: (BuildContext context) {
           return WillPopScope(child: ChatPageState(), onWillPop: () async => false);
         });
+      case "/settings":
+        return MaterialPageRoute(builder: (_) => SettingsPageState());
+      case "/profile":
+        return MaterialPageRoute(builder: (_) => ProfilePageState());
       default:
         return _errorRoute();
     }
