@@ -7,5 +7,6 @@ CustomTheme lightTheme  = const CustomTheme(
     appBarColor: Color(0xff627764),
     primaryColor: Colors.green,
     textColor: Colors.black,
-  secondryTextColor: Colors.grey
+  secondryTextColor: Colors.grey,
+    errorColor: Colors.red
 );

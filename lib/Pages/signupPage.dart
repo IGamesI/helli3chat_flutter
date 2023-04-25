@@ -40,22 +40,17 @@ class SignupPage extends State<SignUpPageState> {
         bodyEncoding: RequestBodyEncoding.JSON,
         headers: headers
     );
-    newRequest.raiseForStatus();
-    String requestBody = newRequest.content();
 
-    await prefs.setString('Token', requestBody);
-    await prefs.setString('UserName', usernameInputController.text);
-    Navigator.of(context).pushNamed('/chat');
+    if (newRequest.statusCode == 500) {
+      setErrorMessage("Server Error!");
+    } else {
+      String requestBody = newRequest.content();
+      await prefs.setString('Token', requestBody);
+      await prefs.setString('UserName', usernameInputController.text);
+      Navigator.of(context).pushNamed('/chat');
+    }
   }
   Future<void> sendSignUpMessageToServer() async {
-    print({
-      'bio': "",
-      'password': passwordInputController.text,
-      'phone': phoneNumberInputController.text,
-      'profile': "",
-      'username': usernameInputController.text
-    });
-
     Map<String, String> headers = {
       "Content-Type": "application/json"
     };
@@ -70,9 +65,17 @@ class SignupPage extends State<SignUpPageState> {
         bodyEncoding: RequestBodyEncoding.JSON,
         headers: headers
     );
-    newRequest.raiseForStatus();
+    //newRequest.raiseForStatus();
     String requestBody = newRequest.content();
-    sendSignInMessageToServer();
+    if (newRequest.statusCode == 400) {
+      setErrorMessage("Username Already Exists");
+    } else if (newRequest.statusCode == 500) {
+      setErrorMessage("Couldn't Create Account!");
+    } else if (newRequest.statusCode == 504) {
+      setErrorMessage("Can't Connect to Server!");
+    } else {
+      sendSignInMessageToServer();
+    }
   }
 
   var ErrorMessage = "";
