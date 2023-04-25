@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:requests/requests.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPageState extends StatefulWidget {
   @override
@@ -25,6 +26,27 @@ class SignupPage extends State<SignUpPageState> {
   TextEditingController repeatPasswordInputController = TextEditingController();
   TextEditingController phoneNumberInputController = TextEditingController();
 
+  Future<void> sendSignInMessageToServer() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json"
+    };
+    var newRequest = await Requests.post('http://37.32.28.222/signin',
+        body: {
+          'password': passwordInputController.text,
+          'username': usernameInputController.text
+        },
+        bodyEncoding: RequestBodyEncoding.JSON,
+        headers: headers
+    );
+    newRequest.raiseForStatus();
+    String requestBody = newRequest.content();
+
+    await prefs.setString('Token', requestBody);
+    await prefs.setString('UserName', usernameInputController.text);
+    Navigator.of(context).pushNamed('/chat');
+  }
   Future<void> sendSignUpMessageToServer() async {
     print({
       'bio': "",
@@ -50,7 +72,7 @@ class SignupPage extends State<SignUpPageState> {
     );
     newRequest.raiseForStatus();
     String requestBody = newRequest.content();
-    print(requestBody);
+    sendSignInMessageToServer();
   }
 
   var ErrorMessage = "";
@@ -63,7 +85,6 @@ class SignupPage extends State<SignUpPageState> {
     if (usernameInputController.text != "" && passwordInputController.text != "" && repeatPasswordInputController.text != "" && phoneNumberInputController != "") {
       if (repeatPasswordInputController.text == passwordInputController.text) {
         sendSignUpMessageToServer();
-        Navigator.of(context).pushNamed('/chat');
       } else {
         setErrorMessage("Passwords Don't Match!");
       }

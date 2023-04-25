@@ -23,7 +23,16 @@ class ChatPage extends State<ChatPageState> {
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
 
+  String userToken = "";
+  String userName = "";
+  Future<void> readToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userToken = prefs.getString('Token')!;
+    userName = prefs.getString('UserName')!;
+  }
+
   String lastUpdatedDateVar = "";
+  // bool isFirstFetchDone = ;
   Future<void> readMessagesJson() async {
     print("------ loading messages!");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,45 +40,50 @@ class ChatPage extends State<ChatPageState> {
     DateTime dateTime = DateTime.now();
     //final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
     // final String? lastUpdatedDate = null;
-    print("------" + lastUpdatedDateVar.toString());
 
     var newRequest;
     Map<String, String> headers = {
-      "Token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc1NDAyNjIsImlzcyI6Im1vaGFtbWFkdGVzdG1vbGF5aSJ9.An5v2sM69k6eIT5jOPcEeYbcl2a776kvEaP5UCESIRKEfnjTMX-VtahKl-uxgWcG5MDBlYMJ2j4GN1iX-hNlDQ"
+      "Token": userToken.toString().replaceAll('\n', '').replaceAll('"', '')
     };
+    print("---------------" + headers.toString());
     if (lastUpdatedDateVar == "") {
       DateTime startDate = dateTime.subtract(Duration(days: 365));
       print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
     } else {
       print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
     }
-    //await prefs.setString('lastUpdatedTime', dateTime.toString());
-    lastUpdatedDateVar = dateTime.toString();
-    String requestBody = newRequest.body;
-    //print(requestBody);
-
-    //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
-    setState(() {
-      List tempMessageListJSON = jsonDecode(requestBody);
-      for (var messageDict in tempMessageListJSON) {
-        if (messageDict["senderid"] == 1) {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self"));
-        } else {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"]));
+    // print(newRequest.statusCode);
+    if (newRequest.statusCode != 502) {
+      //await prefs.setString('lastUpdatedTime', dateTime.toString());
+      lastUpdatedDateVar = dateTime.toString();
+      String requestBody = newRequest.body;
+      scrollToMessageListBottom();
+      //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
+      setState(() {
+        List tempMessageListJSON = jsonDecode(requestBody);
+        for (var messageDict in tempMessageListJSON) {
+          if (messageDict["senderid"] == "self") {
+            messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self"));
+          } else {
+            messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"]));
+          }
         }
-      }
-    });
+      });
+    } else {
+      print("serverDown");
+    }
+
   }
 
   @override
   void initState() {
     super.initState();
     _hashImageUrl();
-
+    readToken();
     readMessagesJson();
-    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       readMessagesJson();
     });
   }
@@ -94,7 +108,7 @@ class ChatPage extends State<ChatPageState> {
 
     Map<String, String> headers = {
       "Content-Type": "application/json",
-      "Token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc1NDAyNjIsImlzcyI6Im1vaGFtbWFkdGVzdG1vbGF5aSJ9.An5v2sM69k6eIT5jOPcEeYbcl2a776kvEaP5UCESIRKEfnjTMX-VtahKl-uxgWcG5MDBlYMJ2j4GN1iX-hNlDQ"
+      "Token": userToken.toString().replaceAll('\n', '').replaceAll('"', '')
     };
     var newRequest = await Requests.post('http://37.32.28.222/new',
         body: {
@@ -102,7 +116,7 @@ class ChatPage extends State<ChatPageState> {
           'sent': true,
           'zone': dateTime.timeZoneName,
           'date': dateTime.toString().replaceAll(' ', '@'),
-          'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
+          // 'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
           'chatid': '5dfa2b61-e038-11ed-af64-16606bc3cbcc'
         },
         bodyEncoding: RequestBodyEncoding.JSON,
@@ -114,7 +128,7 @@ class ChatPage extends State<ChatPageState> {
 
   void handleSendMessage() async {
     if (messageInputController.text != "") {
-      addMessageToList(true, messageInputController.text.trim());
+      //addMessageToList(true, messageInputController.text.trim());
       sendMessageToServer(messageInputController.text.trim());
 
       messageInputController.clear();

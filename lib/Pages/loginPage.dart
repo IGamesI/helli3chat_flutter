@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:requests/requests.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPageState extends StatefulWidget {
   @override
@@ -24,10 +25,7 @@ class LoginPage extends State<LoginPageState> {
   TextEditingController passwordInputController = TextEditingController();
 
   Future<void> sendSignUpMessageToServer() async {
-    print({
-      'pass': passwordInputController.text,
-      'username': usernameInputController.text
-    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, String> headers = {
       "Content-Type": "application/json"
@@ -40,9 +38,19 @@ class LoginPage extends State<LoginPageState> {
         bodyEncoding: RequestBodyEncoding.JSON,
         headers: headers
     );
-    newRequest.raiseForStatus();
-    String requestBody = newRequest.content();
-    print(requestBody);
+    if (newRequest.statusCode == 403) {
+      setErrorMessage("Username or Password Wrong!");
+    } else if (newRequest.statusCode == 500) {
+      setErrorMessage("Server Error!");
+    } else if (newRequest.statusCode == 504) {
+      setErrorMessage("Can't Connect to Server!");
+    } else {
+      String requestBody = newRequest.content();
+      await prefs.setString('Token', requestBody);
+      await prefs.setString('UserName', usernameInputController.text);
+      Navigator.of(context).pushNamed('/chat');
+    }
+
   }
 
   var ErrorMessage = "";
@@ -55,7 +63,6 @@ class LoginPage extends State<LoginPageState> {
   void handleContinueButtonPress() async {
     if (usernameInputController.text != "" && passwordInputController.text != "") {
       sendSignUpMessageToServer();
-      Navigator.of(context).pushNamed('/chat');
     } else {
       setErrorMessage("Fill All Inputs");
     }
