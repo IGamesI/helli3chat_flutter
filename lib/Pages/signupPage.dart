@@ -103,6 +103,18 @@ class SignupPage extends State<SignUpPageState> {
 
     ScrollController pageScrollController = ScrollController();
 
+    String? token;
+    Future<void> CheckForToken() async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      token = prefs.getString('Token');
+      print(token);
+
+      if (token != null) {
+        Navigator.of(context).pushNamed('/chat');
+      }
+    }
+    CheckForToken();
+
     return Scaffold(
         backgroundColor: darkTheme.backgroundColor,
         appBar: AppBar(

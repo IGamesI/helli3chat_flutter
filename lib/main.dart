@@ -19,26 +19,10 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String? token;
-    Future<void> CheckForToken() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      token = prefs.getString('Token');
-      print(token);
-    }
-    CheckForToken();
-    token = null;
-
-    if (token == null) {
-      return MaterialApp(
-        initialRoute: "/",
-        onGenerateRoute: RouteGenerator.generateRoute,
-      );
-    } else {
-      return MaterialApp(
-        initialRoute: "/chat",
-        onGenerateRoute: RouteGenerator.generateRoute,
-      );
-    }
+    return MaterialApp(
+      initialRoute: "/",
+      onGenerateRoute: RouteGenerator.generateRoute,
+    );
   }
 }
 
