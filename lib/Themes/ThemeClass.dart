@@ -7,6 +7,7 @@ class CustomTheme {
   final Color primaryColor;
   final Color textColor;
   final Color secondryTextColor;
+  final Color errorColor;
 
-  const CustomTheme({required this.backgroundColor, required this.secondryBackgroundColor, required this.appBarColor, required this.primaryColor, required this.textColor, required this.secondryTextColor});
+  const CustomTheme({required this.backgroundColor, required this.secondryBackgroundColor, required this.appBarColor, required this.primaryColor, required this.textColor, required this.secondryTextColor, required this.errorColor});
 }

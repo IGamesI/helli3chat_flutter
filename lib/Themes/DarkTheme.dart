@@ -8,4 +8,5 @@ CustomTheme darkTheme  = const CustomTheme(
     primaryColor: Color(0xffb785f5),
     textColor: Colors.white,
     secondryTextColor: Colors.grey,
+    errorColor: Colors.red
 );

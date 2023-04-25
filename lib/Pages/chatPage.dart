@@ -23,29 +23,30 @@ class ChatPage extends State<ChatPageState> {
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
 
+  String lastUpdatedDateVar = "";
   Future<void> readMessagesJson() async {
     print("------ loading messages!");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     DateTime dateTime = DateTime.now();
-    // final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
-    final String? lastUpdatedDate = null;
-    print("------" + lastUpdatedDate.toString());
+    //final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
+    // final String? lastUpdatedDate = null;
+    print("------" + lastUpdatedDateVar.toString());
 
     var newRequest;
     Map<String, String> headers = {
       "Token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc1NDAyNjIsImlzcyI6Im1vaGFtbWFkdGVzdG1vbGF5aSJ9.An5v2sM69k6eIT5jOPcEeYbcl2a776kvEaP5UCESIRKEfnjTMX-VtahKl-uxgWcG5MDBlYMJ2j4GN1iX-hNlDQ"
     };
-    if (lastUpdatedDate == null) {
+    if (lastUpdatedDateVar == "") {
       DateTime startDate = dateTime.subtract(Duration(days: 365));
       print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
       newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
     } else {
-      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'));
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDate.replaceAll(' ', '@'), headers: headers);
+      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
+      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
     }
-    await prefs.setString('lastUpdatedTime', dateTime.toString());
-
+    //await prefs.setString('lastUpdatedTime', dateTime.toString());
+    lastUpdatedDateVar = dateTime.toString();
     String requestBody = newRequest.body;
     //print(requestBody);
 
@@ -54,9 +55,9 @@ class ChatPage extends State<ChatPageState> {
       List tempMessageListJSON = jsonDecode(requestBody);
       for (var messageDict in tempMessageListJSON) {
         if (messageDict["senderid"] == 1) {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Mohammad"));
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self"));
         } else {
-          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: "Mohammad"));
+          messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"]));
         }
       }
     });
@@ -68,14 +69,14 @@ class ChatPage extends State<ChatPageState> {
     _hashImageUrl();
 
     readMessagesJson();
-    // Timer syncMessageTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-    //   readMessagesJson();
-    // });
+    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+      readMessagesJson();
+    });
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
-      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf, userName: "Mohammad"));
+      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf, userName: "Self"));
     });
   }
 
@@ -92,16 +93,17 @@ class ChatPage extends State<ChatPageState> {
     print(dateTime.timeZoneName);
 
     Map<String, String> headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc1NDAyNjIsImlzcyI6Im1vaGFtbWFkdGVzdG1vbGF5aSJ9.An5v2sM69k6eIT5jOPcEeYbcl2a776kvEaP5UCESIRKEfnjTMX-VtahKl-uxgWcG5MDBlYMJ2j4GN1iX-hNlDQ"
     };
     var newRequest = await Requests.post('http://37.32.28.222/new',
         body: {
           'text': message,
-          'sent': false,
+          'sent': true,
           'zone': dateTime.timeZoneName,
           'date': dateTime.toString().replaceAll(' ', '@'),
-          'senderid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc',
-          'chatid': '527ae953-75e9-11ed-8d37-f1dc34e9f9cc'
+          'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
+          'chatid': '5dfa2b61-e038-11ed-af64-16606bc3cbcc'
         },
         bodyEncoding: RequestBodyEncoding.JSON,
         headers: headers

@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: "/chat",
+      initialRoute: "/",
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

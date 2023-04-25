@@ -53,17 +53,29 @@ class SignupPage extends State<SignUpPageState> {
     print(requestBody);
   }
 
+  var ErrorMessage = "";
+  void setErrorMessage(String _errorMessage) {
+    setState(() {
+      ErrorMessage = _errorMessage;
+    });
+  }
   void handleContinueButtonPress() async {
-    //sendSignUpMessageToServer();
-    Navigator.of(context).pushNamed('/chat');
+    if (usernameInputController.text != "" && passwordInputController.text != "" && repeatPasswordInputController.text != "" && phoneNumberInputController != "") {
+      if (repeatPasswordInputController.text == passwordInputController.text) {
+        sendSignUpMessageToServer();
+        Navigator.of(context).pushNamed('/chat');
+      } else {
+        setErrorMessage("Passwords Don't Match!");
+      }
+    } else {
+      setErrorMessage("Fill All Inputs");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
-
 
     ScrollController pageScrollController = ScrollController();
 
@@ -89,7 +101,7 @@ class SignupPage extends State<SignUpPageState> {
                     Container(
                         constraints: BoxConstraints(minWidth: width/2, minHeight: width/2),
                         child: SizedBox(
-                            height: 450,
+                            height: 480,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -256,7 +268,7 @@ class SignupPage extends State<SignUpPageState> {
                                       cursorColor: darkTheme.primaryColor,
                                       controller: phoneNumberInputController,
 
-                                      // keyboardType: TextInputType.phone,
+                                      keyboardType: TextInputType.phone,
                                       style: TextStyle(
                                         color: darkTheme.textColor,
                                         leadingDistribution: TextLeadingDistribution.even,
@@ -306,7 +318,14 @@ class SignupPage extends State<SignUpPageState> {
                                       )
                                   ),
                                 ),
-                                TextButton(onPressed: () {Navigator.of(context).pushNamed('/login');}, child: Text("Sign In"))
+                                TextButton(onPressed: () {Navigator.of(context).pushNamed('/login');}, child: Text("Sign In")),
+                                if (ErrorMessage.isNotEmpty)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8), color: darkTheme.errorColor),
+                                    padding: EdgeInsets.all(10),
+                                    child: Text(ErrorMessage, style: TextStyle(color: darkTheme.textColor)),
+                                  )
                               ],
                             )
                         )

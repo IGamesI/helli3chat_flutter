@@ -45,7 +45,21 @@ class LoginPage extends State<LoginPageState> {
     print(requestBody);
   }
 
+  var ErrorMessage = "";
+  void setErrorMessage(String _errorMessage) {
+    setState(() {
+      ErrorMessage = _errorMessage;
+    });
+  }
+
   void handleContinueButtonPress() async {
+    if (usernameInputController.text != "" && passwordInputController.text != "") {
+      sendSignUpMessageToServer();
+      Navigator.of(context).pushNamed('/chat');
+    } else {
+      setErrorMessage("Fill All Inputs");
+    }
+
     sendSignUpMessageToServer();
   }
 
@@ -183,61 +197,6 @@ class LoginPage extends State<LoginPageState> {
                                 ),
                                 Container(
                                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
-                                    child: TextField(
-                                        cursorColor: darkTheme.primaryColor,
-                                        controller: passwordInputController,
-
-                                        keyboardType: TextInputType.text,
-                                        obscureText: !_passwordVisible,
-                                        enableSuggestions: false,
-                                        autocorrect: false,
-                                        style: TextStyle(
-                                          color: darkTheme.textColor,
-                                          leadingDistribution: TextLeadingDistribution.even,
-
-                                        ),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 0),
-                                          hintText: "Password...",
-                                          hintStyle: TextStyle(
-                                              color: darkTheme.textColor
-                                          ),
-                                          border: InputBorder.none,
-
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                            borderSide: BorderSide(
-                                              color: darkTheme.primaryColor,
-                                              width: 3,
-                                            ),
-
-                                          ),
-
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              // Based on passwordVisible state choose the icon
-                                              _passwordVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off,
-                                              color: darkTheme.primaryColor,
-                                            ),
-                                            onPressed: () {
-                                              // Update the state i.e. toogle the state of passwordVisible variable
-                                              setState(() {
-                                                _passwordVisible = !_passwordVisible;
-                                              });
-                                            },
-                                          ),
-                                        )
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   child: SizedBox(
                                       width: width,
                                       height: 40,
@@ -259,7 +218,15 @@ class LoginPage extends State<LoginPageState> {
                                         ),
                                       )
                                   ),
-                                )
+                                ),
+                                if (ErrorMessage.isNotEmpty)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8), color: darkTheme.errorColor),
+                                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                    padding: EdgeInsets.all(10),
+                                    child: Text(ErrorMessage, style: TextStyle(color: darkTheme.textColor)),
+                                  )
                               ],
                             )
                         )
