@@ -12,11 +12,19 @@ class SignUpPageState extends StatefulWidget {
 }
 
 class SignupPage extends State<SignUpPageState> {
+  Future<void> resetSharedPrefrences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('Token', "");
+    await prefs.setString('UserName', "");
+    print("cleared token!");
+  }
+
   bool _passwordVisible = false;
   bool _repeatPasswordVisible = false;
   @override
   void initState() {
     super.initState();
+    // resetSharedPrefrences();
     if (!isTokenChecked) {
       CheckForToken();
     }
@@ -106,7 +114,7 @@ class SignupPage extends State<SignUpPageState> {
     token = prefs.getString('Token');
     print(token);
 
-    if (token != null) {
+    if (token != null && token != "") {
       Navigator.of(context).pushNamed('/chat');
     }
   }

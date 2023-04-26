@@ -58,6 +58,7 @@ class ChatPage extends State<ChatPageState> {
       //await prefs.setString('lastUpdatedTime', dateTime.toString());
       lastUpdatedDateVar = dateTime.toString();
       String requestBody = newRequest.body;
+      print("------" + requestBody + "-------");
       //scrollToMessageListBottom();
       //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
       setState(() {
@@ -84,7 +85,7 @@ class ChatPage extends State<ChatPageState> {
     _hashImageUrl();
     readToken();
     readMessagesJson();
-    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       readMessagesJson();
     });
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -133,6 +134,7 @@ class ChatPage extends State<ChatPageState> {
     );
     newRequest.raiseForStatus();
     String requestBody = newRequest.content();
+    // lastUpdatedDateVar = DateTime.now().add(Duration(seconds: 1)).toString();
   }
 
   void handleSendMessage() async {
@@ -169,8 +171,9 @@ class ChatPage extends State<ChatPageState> {
           borderRadius: BorderRadius.circular(20),
           child: Container(
               color: darkTheme.appBarColor,
+              height: 80,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -205,7 +208,7 @@ class ChatPage extends State<ChatPageState> {
         )
       ),
       body: Container(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           color: darkTheme.backgroundColor,
           child: Column(
             children: [
