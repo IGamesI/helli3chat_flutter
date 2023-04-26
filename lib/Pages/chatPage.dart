@@ -84,9 +84,9 @@ class ChatPage extends State<ChatPageState> {
     _hashImageUrl();
     readToken();
     readMessagesJson();
-    // Timer syncMessageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   readMessagesJson();
-    // });
+    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      readMessagesJson();
+    });
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   scrollToMessageListBottom();
     // });

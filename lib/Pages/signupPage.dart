@@ -17,6 +17,9 @@ class SignupPage extends State<SignUpPageState> {
   @override
   void initState() {
     super.initState();
+    if (!isTokenChecked) {
+      CheckForToken();
+    }
     _passwordVisible = false;
     _repeatPasswordVisible = false;
   }
@@ -96,24 +99,24 @@ class SignupPage extends State<SignUpPageState> {
     }
   }
 
+  bool isTokenChecked = false;
+  String? token;
+  Future<void> CheckForToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('Token');
+    print(token);
+
+    if (token != null) {
+      Navigator.of(context).pushNamed('/chat');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
     ScrollController pageScrollController = ScrollController();
-
-    String? token;
-    Future<void> CheckForToken() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      token = prefs.getString('Token');
-      print(token);
-
-      // if (token != null) {
-      //   Navigator.of(context).pushNamed('/chat');
-      // }
-    }
-    CheckForToken();
 
     return Scaffold(
         backgroundColor: darkTheme.backgroundColor,
