@@ -32,7 +32,6 @@ class ChatPage extends State<ChatPageState> {
   }
 
   String lastUpdatedDateVar = "";
-  // bool isFirstFetchDone = ;
   Future<void> readMessagesJson() async {
     print("------ loading messages!");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,7 +58,7 @@ class ChatPage extends State<ChatPageState> {
       //await prefs.setString('lastUpdatedTime', dateTime.toString());
       lastUpdatedDateVar = dateTime.toString();
       String requestBody = newRequest.body;
-      scrollToMessageListBottom();
+      //scrollToMessageListBottom();
       //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
       setState(() {
         List tempMessageListJSON = jsonDecode(requestBody);
@@ -71,6 +70,8 @@ class ChatPage extends State<ChatPageState> {
           }
         }
       });
+      await Future.delayed(Duration(milliseconds: 300));
+      scrollToMessageListBottom();
     } else {
       print("serverDown");
     }
@@ -83,9 +84,12 @@ class ChatPage extends State<ChatPageState> {
     _hashImageUrl();
     readToken();
     readMessagesJson();
-    Timer syncMessageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      readMessagesJson();
-    });
+    // Timer syncMessageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   readMessagesJson();
+    // });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   scrollToMessageListBottom();
+    // });
   }
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
@@ -96,7 +100,12 @@ class ChatPage extends State<ChatPageState> {
 
   void scrollToMessageListBottom() {
     setState(() {
-      messageScrollController.animateTo(messageScrollController.position.maxScrollExtent, duration: Duration(milliseconds: 1), curve: Curves.linear);
+      //messageScrollController.animateTo(messageScrollController.position.maxScrollExtent, duration: Duration(milliseconds: 1), curve: Curves.linear);
+      if (messageScrollController.hasClients) {
+        final position = messageScrollController.position.maxScrollExtent;
+        messageScrollController.jumpTo(position);
+      }
+      print("----- scroll to bottom -----");
     });
   }
 
@@ -132,7 +141,7 @@ class ChatPage extends State<ChatPageState> {
       sendMessageToServer(messageInputController.text.trim());
 
       messageInputController.clear();
-      await Future.delayed(Duration(milliseconds: 5));
+      await Future.delayed(Duration(milliseconds: 100));
       scrollToMessageListBottom();
     }
 
@@ -269,10 +278,12 @@ class ChatPage extends State<ChatPageState> {
                                 });
                               },
                               onTap: () async {
-                                if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
-                                  await Future.delayed(Duration(milliseconds: 185));
-                                  scrollToMessageListBottom();
-                                }
+                                await Future.delayed(Duration(milliseconds: 385));
+                                scrollToMessageListBottom();
+                                // if (messageScrollController.position.maxScrollExtent == messageScrollController.offset) {
+                                //   await Future.delayed(Duration(milliseconds: 385));
+                                //   scrollToMessageListBottom();
+                                // }
 
                               },
                             )

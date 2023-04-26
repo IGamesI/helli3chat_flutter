@@ -109,9 +109,9 @@ class SignupPage extends State<SignUpPageState> {
       token = prefs.getString('Token');
       print(token);
 
-      if (token != null) {
-        Navigator.of(context).pushNamed('/chat');
-      }
+      // if (token != null) {
+      //   Navigator.of(context).pushNamed('/chat');
+      // }
     }
     CheckForToken();
 
