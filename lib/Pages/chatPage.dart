@@ -13,11 +13,17 @@ import '../messageWidget.dart';
 import 'package:helli3chat_flutter/Themes/DarkTheme.dart';
 
 class ChatPageState extends StatefulWidget {
+  final String data;
+  ChatPageState({required this.data,});
+
   @override
-  State<ChatPageState> createState() => ChatPage();
+  State<ChatPageState> createState() => ChatPage(chatId: data);
 }
 
 class ChatPage extends State<ChatPageState> {
+  final String chatId;
+  ChatPage({required this.chatId,});
+
   var messageLst = [];
   var messageIdLst = [];
   TextEditingController messageInputController = TextEditingController();
@@ -185,50 +191,56 @@ class ChatPage extends State<ChatPageState> {
     double height = MediaQuery.of(context).size.height;
     return SafeArea(child: Scaffold(
       backgroundColor: darkTheme.backgroundColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60), // Set this height
-        child: PhysicalModel(
-          color: darkTheme.appBarColor,
-          elevation: 8,
-          shadowColor: darkTheme.appBarColor,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-              color: darkTheme.appBarColor,
-              height: 80,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Container(
-                    //   padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    //   child: GestureDetector(
-                    //     onTap: () => {},
-                    //     child: Icon(Icons.arrow_back, color: darkTheme.textColor),
-                    //   ),
-                    // ),
-                    // CircleAvatar(
-                    //   backgroundImage: bytes != null
-                    //       ? MemoryImage(bytes)
-                    //       : AssetImage('assets/TestProfile.jpg') as ImageProvider,
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Text(
-                        'Global Chat',
-                        style: TextStyle(
-                          color: darkTheme.textColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
-                ),
-              )
-          ),
-        )
+      // appBar: PreferredSize(
+      //   preferredSize: Size.fromHeight(60), // Set this height
+      //   child: PhysicalModel(
+      //     color: darkTheme.appBarColor,
+      //     elevation: 8,
+      //     shadowColor: darkTheme.appBarColor,
+      //     borderRadius: BorderRadius.circular(20),
+      //     child: Container(
+      //         color: darkTheme.appBarColor,
+      //         height: 80,
+      //         child: Padding(
+      //           padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+      //           child: Row(
+      //             mainAxisAlignment: MainAxisAlignment.start,
+      //             children: [
+      //               // Container(
+      //               //   padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+      //               //   child: GestureDetector(
+      //               //     onTap: () => {},
+      //               //     child: Icon(Icons.arrow_back, color: darkTheme.textColor),
+      //               //   ),
+      //               // ),
+      //               // CircleAvatar(
+      //               //   backgroundImage: bytes != null
+      //               //       ? MemoryImage(bytes)
+      //               //       : AssetImage('assets/TestProfile.jpg') as ImageProvider,
+      //               // ),
+      //               Padding(
+      //                 padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      //                 child: Text(
+      //                   chatId,
+      //                   style: TextStyle(
+      //                     color: darkTheme.textColor,
+      //                     fontSize: 18,
+      //                     fontWeight: FontWeight.bold
+      //                   ),
+      //                   textAlign: TextAlign.center,
+      //                 ),
+      //               )
+      //             ],
+      //           ),
+      //         )
+      //     ),
+      //   )
+      // ),
+      appBar: AppBar(
+        // The title text which will be shown on the action bar
+          centerTitle: true,
+          title: Text("Helli3 Messenger"),
+          backgroundColor: darkTheme.appBarColor
       ),
       body: Container(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

@@ -115,7 +115,7 @@ class SignupPage extends State<SignUpPageState> {
     print(token);
 
     if (token != null && token != "") {
-      Navigator.of(context).pushNamed('/chat');
+      Navigator.of(context).pushNamed('/chatlist');
     }
   }
 
