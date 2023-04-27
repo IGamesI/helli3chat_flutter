@@ -19,6 +19,7 @@ class ChatPageState extends StatefulWidget {
 
 class ChatPage extends State<ChatPageState> {
   var messageLst = [];
+  var messageIdLst = [];
   TextEditingController messageInputController = TextEditingController();
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
@@ -33,50 +34,73 @@ class ChatPage extends State<ChatPageState> {
 
   String lastUpdatedDateVar = "";
   Future<void> readMessagesJson() async {
-    print("------ loading messages!");
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print("---- request started! " + DateTime.now().toString() + " ----");
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    DateTime dateTime = DateTime.now();
-    //final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
-    // final String? lastUpdatedDate = null;
+      DateTime dateTime = DateTime.now();
+      //final String? lastUpdatedDate = prefs.getString('lastUpdatedTime');
+      // final String? lastUpdatedDate = null;
 
-    var newRequest;
-    Map<String, String> headers = {
-      "Token": userToken.toString().replaceAll('\n', '').replaceAll('"', '')
-    };
-    print("---------------" + headers.toString());
-    if (lastUpdatedDateVar == "") {
-      DateTime startDate = dateTime.subtract(Duration(days: 365));
-      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
-    } else {
-      print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
-      newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
-    }
-    // print(newRequest.statusCode);
-    if (newRequest.statusCode != 502) {
-      //await prefs.setString('lastUpdatedTime', dateTime.toString());
-      lastUpdatedDateVar = dateTime.toString();
-      String requestBody = newRequest.body;
-      print("------" + requestBody + "-------");
-      //scrollToMessageListBottom();
-      //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
-      setState(() {
-        List tempMessageListJSON = jsonDecode(requestBody);
-        for (var messageDict in tempMessageListJSON) {
-          if (messageDict["senderid"] == "self") {
-            messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self"));
-          } else {
-            messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"]));
+      var newRequest;
+      Map<String, String> headers = {
+        "Token": userToken.toString().replaceAll('\n', '').replaceAll('"', '')
+      };
+      if (lastUpdatedDateVar == "") {
+        DateTime startDate = dateTime.subtract(Duration(days: 365));
+        //print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
+        newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
+        // print("YYYYY current time");
+      } else {
+        //print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
+        newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
+        // print("YYYYY current time: " + DateTime.now().toString() + " fetching time: " + lastUpdatedDateVar);
+      }
+      // print(newRequest.statusCode);
+      if (newRequest.statusCode != 502) {
+        //await prefs.setString('lastUpdatedTime', dateTime.toString());
+        lastUpdatedDateVar = dateTime.toString();
+        String requestBody = newRequest.body;
+        //print("xxxxxx" + requestBody + "xxxxxxx");
+        //scrollToMessageListBottom();
+        //String requestBody = '[{"id":1,"text":"Hello 1","delivered":true,"senderid":1,"sent":true,"recieverid":2}, {"id":2,"text":"How are you?","delivered":true,"senderid":2,"sent":true,"recieverid":1}]';
+        setState(() {
+          List tempMessageListJSON = jsonDecode(requestBody);
+          for (var messageDict in tempMessageListJSON) {
+            if (messageDict["senderid"] == "self") {
+              if (messageIdLst == []) {
+                messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self", messageId: messageDict["id"]));
+                messageIdLst.add(messageDict["id"]);
+              } else if (!messageIdLst.contains(messageDict["id"])) {
+                messageLst.add(Message(message: messageDict["text"], isSentBySelf: true, userName: "Self", messageId: messageDict["id"]));
+                messageIdLst.add(messageDict["id"]);
+                print("zzzzz current message id= " + messageDict["id"] + " message id list= " + messageIdLst.toString());
+              }
+            } else {
+              if (messageDict == []) {
+                messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"], messageId: messageDict["id"]));
+                messageIdLst.add(messageDict["id"]);
+              } else if (!messageIdLst.contains(messageDict["id"]))
+                messageLst.add(Message(message: messageDict["text"], isSentBySelf: false, userName: messageDict["senderid"], messageId: messageDict["id"]));
+                messageIdLst.add(messageDict["id"]);
+              print("zzzzz current message id= " + messageDict["id"] + " message id list= " + messageIdLst.toString());
+            }
           }
-        }
-      });
-      await Future.delayed(Duration(milliseconds: 300));
-      scrollToMessageListBottom();
-    } else {
-      print("serverDown");
+        });
+        // print("---- request ended! " + DateTime.now().toString() + " ----");
+        await Future.delayed(Duration(milliseconds: 300));
+        scrollToMessageListBottom();
+      } else {
+        print("serverDown");
+      }
+    } catch(e) {
+      print("no message!");
     }
+  }
 
+  void syncMessageLoop() async {
+    await readMessagesJson();
+    Timer(Duration(seconds: 1), () => syncMessageLoop());
   }
 
   @override
@@ -88,6 +112,7 @@ class ChatPage extends State<ChatPageState> {
     Timer syncMessageTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       readMessagesJson();
     });
+    // syncMessageLoop();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   scrollToMessageListBottom();
     // });
@@ -95,7 +120,7 @@ class ChatPage extends State<ChatPageState> {
 
   void addMessageToList(bool isSentBySelf, var messageTxt) {
     setState(() {
-      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf, userName: "Self"));
+      messageLst.add(Message(message: messageTxt, isSentBySelf: isSentBySelf, userName: "Self", messageId: ""));
     });
   }
 
@@ -106,15 +131,13 @@ class ChatPage extends State<ChatPageState> {
         final position = messageScrollController.position.maxScrollExtent;
         messageScrollController.jumpTo(position);
       }
-      print("----- scroll to bottom -----");
+      // print("----- scroll to bottom -----");
     });
   }
 
   Future<void> sendMessageToServer(String message) async {
     DateTime dateTime = DateTime.now();
     // String currentDate = dateTime.year.toString() + "-" + dateTime.month.toString();
-    print(dateTime.toString());
-    print(dateTime.timeZoneName);
 
     Map<String, String> headers = {
       "Content-Type": "application/json",
@@ -124,7 +147,7 @@ class ChatPage extends State<ChatPageState> {
         body: {
           'text': message,
           'sent': true,
-          'zone': dateTime.timeZoneName,
+          'zone': "+0330",
           'date': dateTime.toString().replaceAll(' ', '@'),
           // 'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
           'chatid': '5dfa2b61-e038-11ed-af64-16606bc3cbcc'
@@ -316,6 +339,7 @@ class Message {
   final String message;
   final bool isSentBySelf;
   final String userName;
+  final String messageId;
 
-  const Message({required this.message, required this.isSentBySelf, required this.userName});
+  const Message({required this.message, required this.isSentBySelf, required this.userName, required this.messageId});
 }
