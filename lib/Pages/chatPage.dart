@@ -27,6 +27,7 @@ class ChatPage extends State<ChatPageState> {
   var messageLst = [];
   var messageIdLst = [];
   TextEditingController messageInputController = TextEditingController();
+  TextEditingController membernameInputController = TextEditingController();
   ScrollController messageScrollController = ScrollController();
   String fullName = '';
 
@@ -54,12 +55,20 @@ class ChatPage extends State<ChatPageState> {
       };
       if (lastUpdatedDateVar == "") {
         DateTime startDate = dateTime.subtract(Duration(days: 365));
-        //print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
-        newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
+        print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + startDate.toString().replaceAll(' ', '@'));
+        if (chatId == "Global") {
+          newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@'), headers: headers);
+        } else {
+          newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + startDate.toString().replaceAll(' ', '@') + "&chatid=" + chatId, headers: headers);
+        }
         // print("YYYYY current time");
       } else {
-        //print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
-        newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'), headers: headers);
+        print("------" + 'http://37.32.28.222/all?zone=' + dateTime.timeZoneName + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@'));
+        if (chatId == "Global") {
+          newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@') , headers: headers);
+        } else {
+          newRequest = await Requests.get('http://37.32.28.222/all?zone=' + "+0330" + '&date=' + lastUpdatedDateVar.replaceAll(' ', '@') + "&chatid=" + chatId, headers: headers);
+        }
         // print("YYYYY current time: " + DateTime.now().toString() + " fetching time: " + lastUpdatedDateVar);
       }
       // print(newRequest.statusCode);
@@ -149,18 +158,34 @@ class ChatPage extends State<ChatPageState> {
       "Content-Type": "application/json",
       "Token": userToken.toString().replaceAll('\n', '').replaceAll('"', '')
     };
-    var newRequest = await Requests.post('http://37.32.28.222/new',
-        body: {
-          'text': message,
-          'sent': true,
-          'zone': "+0330",
-          'date': dateTime.toString().replaceAll(' ', '@'),
-          // 'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
-          'chatid': '5dfa2b61-e038-11ed-af64-16606bc3cbcc'
-        },
-        bodyEncoding: RequestBodyEncoding.JSON,
-        headers: headers
-    );
+    var newRequest;
+    if (chatId == "Global") {
+      newRequest = await Requests.post('http://37.32.28.222/new',
+          body: {
+            'text': message,
+            'sent': true,
+            'zone': "+0330",
+            'date': dateTime.toString().replaceAll(' ', '@'),
+            // 'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
+            'chatid': '5dfa2b61-e038-11ed-af64-16606bc3cbcc'
+          },
+          bodyEncoding: RequestBodyEncoding.JSON,
+          headers: headers
+      );
+    } else {
+      newRequest = await Requests.post('http://37.32.28.222/new',
+          body: {
+            'text': message,
+            'sent': true,
+            'zone': "+0330",
+            'date': dateTime.toString().replaceAll(' ', '@'),
+            // 'senderid': '2906df21-e038-11ed-af64-16606bc3cbcc',
+            'chatid': chatId
+          },
+          bodyEncoding: RequestBodyEncoding.JSON,
+          headers: headers
+      );
+    }
     newRequest.raiseForStatus();
     String requestBody = newRequest.content();
     // lastUpdatedDateVar = DateTime.now().add(Duration(seconds: 1)).toString();
@@ -189,6 +214,87 @@ class ChatPage extends State<ChatPageState> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
+    Container AddUsersBotttomSheet() {
+      return Container(
+          color: darkTheme.backgroundColor,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+            child: Wrap(
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                  child: Container(
+                    // height: 50,
+                    // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                    child: TextField(
+                        cursorColor: darkTheme.primaryColor,
+                        controller: membernameInputController,
+
+                        keyboardType: TextInputType.text,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        style: TextStyle(
+                          color: darkTheme.textColor,
+                          textBaseline: TextBaseline.alphabetic,
+                        ),
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 10),
+                          hintText: "New Member Username...",
+                          hintStyle: TextStyle(
+                            color: darkTheme.textColor,
+                          ),
+                          border: InputBorder.none,
+
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: darkTheme.primaryColor,
+                              width: 3,
+                            ),
+
+                          ),
+                        )
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: SizedBox(
+                      width: width,
+                      height: 40,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+
+                        child: ElevatedButton(
+                            onPressed: () {
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: darkTheme.secondryBackgroundColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8), // <-- Radius
+                              ),
+                            ),
+
+                            child: Text("Add Member", style: TextStyle(fontSize: 18),)
+                        ),
+                      )
+                  ),
+                ),
+              ],
+            ),
+          )
+      );
+    }
+
     return SafeArea(child: Scaffold(
       backgroundColor: darkTheme.backgroundColor,
       // appBar: PreferredSize(
@@ -240,7 +346,20 @@ class ChatPage extends State<ChatPageState> {
         // The title text which will be shown on the action bar
           centerTitle: true,
           title: Text("Helli3 Messenger"),
-          backgroundColor: darkTheme.appBarColor
+          backgroundColor: darkTheme.appBarColor,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
+                  return AddUsersBotttomSheet();
+                });
+              },
+            )
+          ],
       ),
       body: Container(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

@@ -24,6 +24,85 @@ class ChatListPage extends State<ChatListPageState> {
     ScrollController pageScrollController = ScrollController();
     TextEditingController chatnameInputController = TextEditingController();
 
+    Container NewChatBottomSheet() {
+      return Container(
+          color: darkTheme.backgroundColor,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+            child: Wrap(
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                  child: Container(
+                    // height: 50,
+                    // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
+                    child: TextField(
+                        cursorColor: darkTheme.primaryColor,
+                        controller: chatnameInputController,
+
+                        keyboardType: TextInputType.text,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        style: TextStyle(
+                          color: darkTheme.textColor,
+                          textBaseline: TextBaseline.alphabetic,
+                        ),
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 10),
+                          hintText: "Chat Name...",
+                          hintStyle: TextStyle(
+                            color: darkTheme.textColor,
+                          ),
+                          border: InputBorder.none,
+
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(
+                              color: darkTheme.primaryColor,
+                              width: 3,
+                            ),
+
+                          ),
+                        )
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: SizedBox(
+                      width: width,
+                      height: 40,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+
+                        child: ElevatedButton(
+                            onPressed: () {
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: darkTheme.secondryBackgroundColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8), // <-- Radius
+                              ),
+                            ),
+
+                            child: Text("Add Chat", style: TextStyle(fontSize: 18),)
+                        ),
+                      )
+                  ),
+                ),
+              ],
+            ),
+          )
+      );
+    }
+
     return Scaffold(
         backgroundColor: darkTheme.backgroundColor,
         appBar: PreferredSize(
@@ -154,82 +233,7 @@ class ChatListPage extends State<ChatListPageState> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
-                                    return Container(
-                                      color: darkTheme.backgroundColor,
-                                      padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context).viewInsets.bottom,
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                        child: Wrap(
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                              padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                                              child: Container(
-                                                // height: 50,
-                                                // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8), color: darkTheme.secondryBackgroundColor),
-                                                child: TextField(
-                                                    cursorColor: darkTheme.primaryColor,
-                                                    controller: chatnameInputController,
-
-                                                    keyboardType: TextInputType.text,
-                                                    enableSuggestions: false,
-                                                    autocorrect: false,
-                                                    style: TextStyle(
-                                                      color: darkTheme.textColor,
-                                                      textBaseline: TextBaseline.alphabetic,
-                                                    ),
-                                                    textAlignVertical: TextAlignVertical.top,
-                                                    decoration: InputDecoration(
-                                                      contentPadding: EdgeInsets.fromLTRB(10, 14, 10, 10),
-                                                      hintText: "Chat Name...",
-                                                      hintStyle: TextStyle(
-                                                        color: darkTheme.textColor,
-                                                      ),
-                                                      border: InputBorder.none,
-
-                                                      focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                        borderSide: BorderSide(
-                                                          color: darkTheme.primaryColor,
-                                                          width: 3,
-                                                        ),
-
-                                                      ),
-                                                    )
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                              child: SizedBox(
-                                                  width: width,
-                                                  height: 40,
-                                                  child: Container(
-                                                    padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-
-                                                    child: ElevatedButton(
-                                                        onPressed: () {
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                          primary: darkTheme.secondryBackgroundColor,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(8), // <-- Radius
-                                                          ),
-                                                        ),
-
-                                                        child: Text("Add Chat", style: TextStyle(fontSize: 18),)
-                                                    ),
-                                                  )
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    );
+                                    return NewChatBottomSheet();
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
